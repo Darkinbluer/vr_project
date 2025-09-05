@@ -44,9 +44,32 @@ public class VoiceClient : MonoBehaviour
     public string openRouterUrl = "https://openrouter.ai/api/v1/chat/completions";
     public string openRouterModel = "anthropic/claude-3-haiku"; // Kullanılacak model
     public bool autoSendToChatbot = true; // STT sonrası otomatik chatbot'a gönder
+    public bool useTestMode = true; // Test modu - API anahtarı olmadan çalışır
 
     // Unity ifi anflndanfcalfmayfcalf kapat/afac (varsaylan kapal)
     public bool playbackInUnity = false;
+
+    // Test modu için yanıt fonksiyonu
+    private string GetTestResponse(string userMessage)
+    {
+        string lowerMessage = userMessage.ToLower();
+        
+        // Basit yanıt sistemi
+        if (lowerMessage.Contains("merhaba") || lowerMessage.Contains("selam"))
+            return "Merhaba! Size nasıl yardımcı olabilirim?";
+        else if (lowerMessage.Contains("nasılsın"))
+            return "İyiyim, teşekkürler! Siz nasılsınız?";
+        else if (lowerMessage.Contains("teşekkür") || lowerMessage.Contains("sağol"))
+            return "Rica ederim! Başka bir şey var mı?";
+        else if (lowerMessage.Contains("ne yapıyorsun"))
+            return "VR projenizde ses tanıma sistemi olarak çalışıyorum!";
+        else if (lowerMessage.Contains("ses") || lowerMessage.Contains("tanıma"))
+            return "Evet, ses tanıma sistemi çalışıyor! Konuşmaya devam edin.";
+        else if (lowerMessage.Contains("yardım"))
+            return "Size nasıl yardımcı olabilirim? Sorularınızı sorabilirsiniz.";
+        else
+            return "Anladım: \"" + userMessage + "\". Başka bir şey sormak ister misiniz?";
+    }
 
     void Start()
     {
@@ -209,6 +232,19 @@ public class VoiceClient : MonoBehaviour
     {
         Debug.Log("OpenRouter API'ye gönderiliyor: " + message);
         if (subtitle) subtitle.text = "AI'ya gönderiliyor...";
+
+        // Test modu kontrolü
+        if (useTestMode)
+        {
+            Debug.Log("Test modu aktif - API anahtarı olmadan çalışıyor");
+            yield return new WaitForSeconds(1f); // Simüle edilmiş gecikme
+            
+            // Test yanıtı
+            string testResponse = GetTestResponse(message);
+            Debug.Log("AI yanıtı (Test): " + testResponse);
+            if (subtitle) subtitle.text = "AI: " + testResponse;
+            yield break;
+        }
 
         // API Key kontrolü
         if (string.IsNullOrEmpty(openRouterApiKey))
