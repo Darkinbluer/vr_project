@@ -97,3 +97,4 @@ if __name__ == '__main__':
         print(f"\n[{time.strftime('%H:%M:%S')}] Server durduruldu.")
     except Exception as e:
         print(f"[{time.strftime('%H:%M:%S')}] Server hatası: {e}")
+
